@@ -1,0 +1,14 @@
+# Node
+node_modules/
+dist/
+
+# Midnight
+managed/
+.midnight-state.json
+.midnight-wallet-state/
+*.env.local
+.env.local
+
+# IDEs and OS
+.vscode/
+.DS_Store

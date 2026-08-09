@@ -1,0 +1,38 @@
+{
+  "name": "decentralized-file-storage-tracker",
+  "version": "0.1.0",
+  "description": "Decentralized File Storage Tracker - Upload files to IPFS and store their content hashes along with ownership metadata on the Midnight blockchain",
+  "type": "module",
+  "scripts": {
+    "setup": "npm install && cd frontend && npm install",
+    "compile": "compact compile contracts/FileStorageTracker.compact --output_dir contracts/managed",
+    "deploy": "tsx src/deploy.ts",
+    "network": "tsx src/network.ts",
+    "wallet": "tsx src/wallet.ts",
+    "cli": "tsx src/cli.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "clean": "rm -rf contracts/managed node_modules frontend/node_modules frontend/dist .midnight-state.json .midnight-wallet-state"
+  },
+  "dependencies": {
+    "axios": "^1.7.0",
+    "commander": "^12.0.0",
+    "dotenv": "^16.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.1",
+    "tsx": "^4.23.11",
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.9"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "pnpm": {
+    "overrides": {
+      "@midnight-ntwrk/*": "workspace:*"
+    }
+  }
+}

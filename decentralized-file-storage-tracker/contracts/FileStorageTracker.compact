@@ -1,0 +1,269 @@
+/**
+ * FileStorageTracker - Decentralized File Storage Tracker
+ * 
+ * PUBLIC DATA (visible on-chain):
+ * - File CID (IPFS content identifier)
+ * - Owner address (Midnight address)
+ * - Timestamp of registration/update
+ * - File size (bytes)
+ * - MIME type
+ * - File version counter
+ * 
+ * PRIVATE DATA (witnesses, never revealed):
+ * - File content hash (SHA-256 of file contents) - used in register_file and update_file
+ * - File content (full file bytes) - used in verify_ownership to prove knowledge of preimage
+ * - New file content hash (SHA-256) - used in update_file
+ * 
+ * PRIVACY GUARANTEES:
+ * - On-chain observers see: "Address X owns file QmY... (CID) uploaded at timestamp T, size S bytes"
+ * - On-chain observers CANNOT see: Actual file content, content hashes, or prove file ownership without owner's cooperation
+ * - File content hash is committed on-chain but never revealed - only the CID is public
+ * - verify_ownership proves knowledge of file content without revealing it
+ */
+
+import { Hash } from "midnight:crypto";
+
+/**
+ * Represents a file record stored on-chain
+ */
+struct FileRecord {
+  cid: [u8; 46],      // IPFS CID (v0/v1 base58btc, max 46 bytes)
+  owner: Address,      // Midnight address of owner
+  timestamp: u64,      // Unix timestamp
+  size: u64,           // File size in bytes
+  mime_type: [u8; 64], // MIME type (null-padded)
+  version: u64,        // Version counter (increments on update)
+  content_hash_commitment: [u8; 32], // SHA-256 commitment (not the actual hash)
+}
+
+/**
+ * Contract state containing all registered files
+ */
+struct State {
+  files: Map<[u8; 46], FileRecord>, // Key: CID
+  total_files: u64,
+}
+
+/**
+ * Initialize contract state
+ */
+witness init_state(): State {
+  State {
+    files: Map::new(),
+    total_files: 0,
+  }
+}
+
+/**
+ * Register a new file on the blockchain
+ * 
+ * PUBLIC INPUTS:
+ * - cid: IPFS content identifier
+ * - size: File size in bytes
+ * - mime_type: MIME type of the file
+ * - content_hash_commitment: Commitment to file content hash (SHA-256)
+ * 
+ * PRIVATE WITNESS:
+ * - content_hash: Actual SHA-256 hash of file content (proves ownership without revealing file)
+ * 
+ * CONSTRAINTS:
+ * - CID must not already exist
+ * - content_hash_commitment must equal SHA-256(content_hash)
+ * - Caller becomes the owner
+ */
+circuit register_file(
+  state: State,
+  cid: [u8; 46],
+  size: u64,
+  mime_type: [u8; 64],
+  content_hash_commitment: [u8; 32],
+  content_hash: [u8; 32],  // PRIVATE: actual file content hash
+): State {
+  // Verify the commitment matches the hash
+  require(Hash.sha256(content_hash) == content_hash_commitment, "Invalid content hash commitment");
+  
+  // Check CID doesn't already exist
+  require(!state.files.contains_key(cid), "File already registered");
+  
+  // Get caller address
+  let caller = caller();
+  
+  // Get current timestamp
+  let timestamp = timestamp();
+  
+  // Create file record
+  let record = FileRecord {
+    cid: cid,
+    owner: caller,
+    timestamp: timestamp,
+    size: size,
+    mime_type: mime_type,
+    version: 1,
+    content_hash_commitment: content_hash_commitment,
+  };
+  
+  // Insert into map
+  let new_files = state.files.insert(cid, record);
+  
+  // Disclose the CID and owner for indexer visibility
+  disclose(cid);
+  disclose(caller);
+  disclose(timestamp);
+  
+  State {
+    files: new_files,
+    total_files: state.total_files + 1,
+  }
+}
+
+/**
+ * Verify file ownership by proving knowledge of file content
+ * 
+ * PUBLIC INPUTS:
+ * - cid: IPFS content identifier of the file to verify
+ * 
+ * PRIVATE WITNESS:
+ * - content: Full file content (bytes) - proves knowledge of preimage
+ * 
+ * CONSTRAINTS:
+ * - File must exist
+ * - Caller must be the owner
+ * - SHA-256(content) must match the stored content_hash_commitment
+ * - Returns true if verification succeeds (but content is never revealed)
+ */
+circuit verify_ownership(
+  state: State,
+  cid: [u8; 46],
+  content: [u8; 1024],  // PRIVATE: file content (max 1KB for circuit constraints)
+  content_len: u64,     // Actual length of content
+): (State, bool) {
+  // Get file record
+  let record = state.files.get(cid).expect("File not found");
+  
+  // Verify caller is owner
+  let caller = caller();
+  require(record.owner == caller, "Not the file owner");
+  
+  // Hash the provided content
+  let computed_hash = Hash.sha256(content[..content_len]);
+  
+  // Verify it matches the stored commitment
+  let matches = computed_hash == record.content_hash_commitment;
+  
+  // Disclose verification result (but not the content or hash)
+  disclose(cid);
+  disclose(caller);
+  disclose(matches);
+  
+  (state, matches)
+}
+
+/**
+ * Update an existing file (owner only)
+ * 
+ * PUBLIC INPUTS:
+ * - cid: IPFS content identifier of file to update
+ * - new_cid: New IPFS content identifier
+ * - new_size: New file size in bytes
+ * - new_mime_type: New MIME type
+ * - new_content_hash_commitment: Commitment to new file content hash
+ * 
+ * PRIVATE WITNESS:
+ * - new_content_hash: Actual SHA-256 hash of new file content
+ * 
+ * CONSTRAINTS:
+ * - File must exist
+ * - Caller must be the owner
+ * - new_cid must not already exist (unless same as old)
+ * - new_content_hash_commitment must equal SHA-256(new_content_hash)
+ * - Version increments
+ */
+circuit update_file(
+  state: State,
+  cid: [u8; 46],
+  new_cid: [u8; 46],
+  new_size: u64,
+  new_mime_type: [u8; 64],
+  new_content_hash_commitment: [u8; 32],
+  new_content_hash: [u8; 32],  // PRIVATE: new file content hash
+): State {
+  // Verify the new commitment matches the new hash
+  require(Hash.sha256(new_content_hash) == new_content_hash_commitment, "Invalid new content hash commitment");
+  
+  // Get existing file record
+  let record = state.files.get(cid).expect("File not found");
+  
+  // Verify caller is owner
+  let caller = caller();
+  require(record.owner == caller, "Not the file owner");
+  
+  // Check new_cid doesn't exist (unless it's the same file)
+  require(!state.files.contains_key(new_cid) || new_cid == cid, "New CID already exists");
+  
+  // Get current timestamp
+  let timestamp = timestamp();
+  
+  // Remove old record if CID changed
+  let files_after_remove = if new_cid != cid {
+    state.files.remove(cid)
+  } else {
+    state.files
+  };
+  
+  // Create updated record
+  let updated_record = FileRecord {
+    cid: new_cid,
+    owner: caller,
+    timestamp: timestamp,
+    size: new_size,
+    mime_type: new_mime_type,
+    version: record.version + 1,
+    content_hash_commitment: new_content_hash_commitment,
+  };
+  
+  // Insert new record
+  let new_files = files_after_remove.insert(new_cid, updated_record);
+  
+  // Disclose updated info
+  disclose(new_cid);
+  disclose(caller);
+  disclose(timestamp);
+  disclose(record.version + 1);
+  
+  State {
+    files: new_files,
+    total_files: if new_cid != cid { state.total_files } else { state.total_files },
+  }
+}
+
+/**
+ * Get file record (public query - no private inputs)
+ */
+circuit get_file(
+  state: State,
+  cid: [u8; 46],
+): (State, FileRecord) {
+  let record = state.files.get(cid).expect("File not found");
+  (state, record)
+}
+
+/**
+ * Get all CIDs owned by caller
+ */
+circuit get_my_files(
+  state: State,
+): (State, [[u8; 46]; 100], u64) {  // Max 100 files
+  let caller = caller();
+  let mut cids: [[u8; 46]; 100] = [[0; 46]; 100];
+  let mut count: u64 = 0;
+  
+  // Iterate through all files (limited to 100 for circuit constraints)
+  for (cid, record) in state.files.iter() {
+    if record.owner == caller && count < 100 {
+      cids[count as usize] = cid;
+      count = count + 1;
+    }
+  }
+  
+  (state, cids, count)
+}
