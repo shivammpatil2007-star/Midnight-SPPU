@@ -75,5 +75,7 @@ Open http://localhost:3000 in your browser to interact with the application.
 
 👤 Author & Maintainer
 Shivam Patil
+
 GitHub: @shivammpatil2007-star
+
 Repository: https://github.com/shivammpatil2007-star/Midnight-SPPU
