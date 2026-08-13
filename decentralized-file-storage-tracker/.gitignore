@@ -3,7 +3,7 @@ node_modules/
 dist/
 
 # Midnight
-managed/
+# managed/ (tracked for submission compilation output)
 .midnight-state.json
 .midnight-wallet-state/
 *.env.local
