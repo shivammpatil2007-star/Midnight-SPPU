@@ -4,6 +4,14 @@ Upload files to IPFS and store their content hashes along with ownership metadat
 
 ---
 
+## 🖥️ Web Application User Interface (`http://localhost:3000/`)
+
+![Web Application User Interface](docs/images/frontend_app.png)
+
+The application frontend is running locally at **[http://localhost:3000/](http://localhost:3000/)**. It allows users to connect their Midnight Lace wallet, upload files to IPFS, and generate zero-knowledge ownership proofs.
+
+---
+
 ## 💡 Initial Product Idea
 
 The **Decentralized File Storage Tracker** solves a critical problem in digital asset management: proving you own a file and verifying its integrity without exposing its content to the public or relying on centralized authorities. Traditional file storage platforms either require uploading unencrypted files to third-party servers or publishing raw hashes on transparent public blockchains. By building on Midnight's Compact smart contract language, this dApp stores public metadata (IPFS CIDs, timestamps, file sizes) on-chain while keeping content hashes and raw file preimages completely private as zero-knowledge witnesses.
