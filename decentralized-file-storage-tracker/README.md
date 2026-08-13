@@ -30,6 +30,8 @@ Midnight smart contracts separate public ledger state from private witness data.
 
 ## ⚙️ Contract Compilation Output
 
+![Compact Contract Compilation Output](docs/images/compile_output.png)
+
 ```text
 $ npm run compile
 
@@ -51,6 +53,8 @@ Compiling FileStorageTracker.compact ...
 ---
 
 ## 🚀 Smart Contract Deployment
+
+![Smart Contract Deployment Output](docs/images/contract_deployment.png)
 
 - **Network:** Midnight Preview Testnet
 - **Deployed Contract ID:** `02007f34a19b88219c6e5896a7985392d4715f212984578e9079fdfd7515a4e5`
@@ -124,15 +128,19 @@ npm run frontend:build
 
 ## 📊 Repository Commit History
 
-The repository features 8 well-scoped commits:
+The repository features well-scoped commits:
 ```text
-93e94b3 chore: add package-lock.json for deterministic builds
-c9544f9 fix: resolve frontend TypeScript unused imports and type checks
-d2fec60 config: update frontend .env.example with preview contract address
-4d13f32 docs: update README with real Preview network contract address
-aa73fed test: implement unit tests for FileStorageTracker smart contract and ZK privacy
-081f817 build: add compiled Compact contract managed artifacts for FileStorageTracker
-a65920e fix: update .gitignore to track compact compiled managed output
+b4e754f docs: update README with public vs private witness breakdown and setup instructions
+f68f1f8 chore: add package-lock.json for deterministic builds
+709769e fix: resolve frontend TypeScript unused imports and type checks
+b61c958 config: update frontend .env.example with preview contract address
+74890a7 docs: update README with real Preview network contract address
+71a330d test: implement unit tests for FileStorageTracker smart contract and ZK privacy
+30dd796 build: add compiled Compact contract managed artifacts for FileStorageTracker
+0758a11 fix: update .gitignore to track compact compiled managed output
+178973d Commit 2
+c84a8ae Delete prompt.md
+7a1169f Initialize README with project details and setup guide
 955a520 first commit
 ```
 
