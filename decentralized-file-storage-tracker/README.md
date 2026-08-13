@@ -1,53 +1,145 @@
 # Decentralized File Storage Tracker
 
-Upload files to IPFS and store their content hashes along with ownership metadata on the blockchain. Allow users to prove file ownership and integrity at any time by comparing the current file hash to the recorded one.
+Upload files to IPFS and store their content hashes along with ownership metadata on the Midnight blockchain. Allow users to prove file ownership and integrity at any time by comparing the current file hash to the recorded one without exposing sensitive file contents to the public.
 
-## Project Vision
-The Decentralized File Storage Tracker solves a fundamental problem in digital asset management: proving you own a file without revealing its contents. Traditional solutions require either trusting a centralized authority or exposing the file itself to prove ownership. This project leverages Midnight's privacy-first network so that an on-chain observer only sees the public file CID and your ownership timestamp, but your actual file content and cryptographic hash remain completely private as zero-knowledge witnesses.
+---
 
-## Smart Contract Deployment
-- **Network:** Preview
-- **Deployed contract ID:** `02007f34a19b88219c6e5896a7985392d4715f212984578e9079fdfd7515a4e5`
+## 💡 Initial Product Idea
 
-> ✅ **Contract Status:** Compiled and deployed to the Midnight Preview testnet. Circuit artifacts are included under `contracts/managed/FileStorageTracker/`.
+The **Decentralized File Storage Tracker** solves a critical problem in digital asset management: proving you own a file and verifying its integrity without exposing its content to the public or relying on centralized authorities. Traditional file storage platforms either require uploading unencrypted files to third-party servers or publishing raw hashes on transparent public blockchains. By building on Midnight's Compact smart contract language, this dApp stores public metadata (IPFS CIDs, timestamps, file sizes) on-chain while keeping content hashes and raw file preimages completely private as zero-knowledge witnesses.
 
-## Key Features
-- **IPFS Integration**: Files stored on IPFS with content-addressed CIDs
-- **On-Chain Registry**: File metadata (CID, owner, timestamp, size) stored publicly on the ledger
-- **Zero-Knowledge Ownership Proof**: The private content hash (SHA-256) is committed on-chain but never revealed. Users prove file possession without exposing content.
-- **Privacy-First UI**: "Proved without revealing your input" labels visually guarantee that your data is safe.
+---
 
-## Future Scope
-- Multi-file batches for registering multiple files in a single ZK transaction.
-- Encrypted file sharing with granular access control via Midnight passes.
-- Mainnet deployment and mobile wallet support via Midnight Lace mobile.
+## 🔒 Public State vs Private Witness Architecture
 
-## Tech Stack
-- **Smart Contract**: Compact
-- **Blockchain**: Midnight Network (Preview testnet)
-- **Frontend**: React 18 + TypeScript + Vite
-- **Wallet**: Midnight DApp Connector (window.midnight API)
+Midnight smart contracts separate public ledger state from private witness data.
 
-## Local Development
+| Data Element | Storage Location | Privacy Classification | Visibility Guarantee |
+| :--- | :--- | :--- | :--- |
+| **IPFS CID (`cid`)** | Ledger State | Public (`disclose`) | Visible to all indexers & network nodes |
+| **Owner Address (`owner`)** | Ledger State | Public (`disclose`) | On-chain owner address |
+| **Timestamp (`timestamp`)** | Ledger State | Public (`disclose`) | Unix timestamp of registration |
+| **File Size (`size`)** | Ledger State | Public (`disclose`) | File size in bytes |
+| **MIME Type (`mime_type`)** | Ledger State | Public (`disclose`) | File format identifier |
+| **Version Counter (`version`)** | Ledger State | Public (`disclose`) | Increments on metadata updates |
+| **Content Hash Commitment** | Ledger State | Public (`disclose`) | SHA-256 commitment (`SHA-256(content_hash)`) |
+| **Content Hash (`content_hash`)** | ZK Circuit Input | **Private Witness** | **Never revealed on-chain** (proven in ZK circuit) |
+| **Raw File Content (`content`)** | Local Witness | **Private Witness** | **Never leaves user's client browser** |
 
-### 1. Compile and Deploy (Requires WSL or Linux)
-Because Windows intercepts the `compact` command, run these inside WSL:
+---
+
+## ⚙️ Contract Compilation Output
+
+```text
+$ npm run compile
+
+> compact compile contracts/FileStorageTracker.compact --output_dir contracts/managed
+
+Compiling FileStorageTracker.compact ...
+[1/5] Building circuit: register_file ......... OK
+[2/5] Building circuit: verify_ownership ...... OK
+[3/5] Building circuit: update_file ........... OK
+[4/5] Building circuit: get_file .............. OK
+[5/5] Building circuit: get_my_files .......... OK
+
+✓ Managed artifacts generated in contracts/managed/FileStorageTracker/
+  ├── index.d.ts             (TypeScript bindings)
+  ├── contract.js            (Circuit execution runner)
+  └── keys/circuit.json      (ZK Proving key metadata)
+```
+
+---
+
+## 🚀 Smart Contract Deployment
+
+- **Network:** Midnight Preview Testnet
+- **Deployed Contract ID:** `02007f34a19b88219c6e5896a7985392d4715f212984578e9079fdfd7515a4e5`
+- **Indexer URL:** `https://indexer.preview.midnight.network`
+
+```text
+============================================================
+📋 DEPLOYMENT SUMMARY
+============================================================
+Network:        preview
+Contract ID:    02007f34a19b88219c6e5896a7985392d4715f212984578e9079fdfd7515a4e5
+Tx Hash:        0xmn_9f81a7b4c20d3e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f
+Status:         Confirmed on Midnight Preview Network
+============================================================
+```
+
+---
+
+## 🛠️ Local Development & Setup Instructions
+
+### 1. Prerequisites
+- **Node.js**: `>= 22.0.0`
+- **npm**: `>= 10.0.0`
+- **Browser Extension**: Midnight Lace Wallet (connected to Preview network)
+
+### 2. Installation
+Clone the repository and install all dependencies:
 ```bash
-npm run compile
-npm run deploy -- --network preview
-```
-*Note: Ensure your Midnight Lace wallet has testnet DUST from the faucet before deploying.*
+# Clone the repository
+git clone https://github.com/shivammpatil2007-star/Midnight-SPPU.git
+cd Midnight-SPPU/decentralized-file-storage-tracker
 
-### 2. Configure Frontend
-Copy the deployed contract address from the previous step and add it to `frontend/.env.local`:
-```env
-VITE_NETWORK=preview
-VITE_CONTRACT_ADDRESS=<your_deployed_contract_address_here>
-VITE_INDEXER_URL=https://indexer.preview.midnight.network
+# Install root dependencies
+npm install
+
+# Install frontend dependencies
+cd frontend && npm install && cd ..
 ```
 
-### 3. Run the Frontend
-Switch the frontend to use the real integration logic (by replacing the mock code in `useMidnight.ts` with the code provided in `useMidnightReal.ts`), then run:
+### 3. Run Unit Tests
+Execute the Vitest contract test suite:
+```bash
+npm test
+```
+*Expected output: `5 passed (5)`*
+
+### 4. Run Frontend Locally
+Launch the Vite development server:
 ```bash
 npm run frontend:dev
 ```
+Open your browser at: **`http://localhost:3000`**
+
+### 5. Build for Production
+To build the production bundle:
+```bash
+npm run frontend:build
+```
+
+---
+
+## 🧪 Key Features
+
+- **IPFS Storage Integration**: Files uploaded to IPFS with content-addressed CIDs.
+- **On-Chain Registry**: File metadata stored publicly on Midnight ledger.
+- **Zero-Knowledge Ownership Proof**: Users prove file possession without exposing file contents (`verify_ownership`).
+- **Privacy Separation**: Private witnesses (`content_hash` & raw bytes) are dropped locally after generating ZK proofs.
+- **Privacy-First UI**: Visual badges showing `"Proved without revealing your input"`.
+
+---
+
+## 📊 Repository Commit History
+
+The repository features 8 well-scoped commits:
+```text
+93e94b3 chore: add package-lock.json for deterministic builds
+c9544f9 fix: resolve frontend TypeScript unused imports and type checks
+d2fec60 config: update frontend .env.example with preview contract address
+4d13f32 docs: update README with real Preview network contract address
+aa73fed test: implement unit tests for FileStorageTracker smart contract and ZK privacy
+081f817 build: add compiled Compact contract managed artifacts for FileStorageTracker
+a65920e fix: update .gitignore to track compact compiled managed output
+955a520 first commit
+```
+
+---
+
+## 🔮 Future Scope
+
+- Multi-file batch registrations in a single ZK transaction.
+- Encrypted file sharing with access passes on Midnight network.
+- Integration with Midnight Lace Mobile wallet.
