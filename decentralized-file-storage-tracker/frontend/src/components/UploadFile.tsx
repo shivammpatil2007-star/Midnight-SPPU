@@ -1,8 +1,8 @@
 import { useState, useCallback, useRef } from "react";
 import { useMidnight } from "../hooks/useMidnight";
 import type { FileRecord, PrivacyMode, StorageProvider } from "../types";
-import { Lock, Shield, Key, CheckCircle, ExternalLinkIcon } from "./Icons";
-import { getExplorerUrl, getMidnightExplorerUrl, formatTxHash, cleanTxHash } from "../utils/explorer";
+import { Lock, Shield, Key, CheckCircle } from "./Icons";
+import { cleanTxHash } from "../utils/explorer";
 import "./UploadFile.css";
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
