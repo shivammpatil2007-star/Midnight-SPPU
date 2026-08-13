@@ -7,9 +7,9 @@ The Decentralized File Storage Tracker solves a fundamental problem in digital a
 
 ## Smart Contract Deployment
 - **Network:** Preview
-- **Deployed contract ID:** [PENDING — run: `npm run deploy -- --network preview`]
+- **Deployed contract ID:** `02007f34a19b88219c6e5896a7985392d4715f212984578e9079fdfd7515a4e5`
 
-> ⚠️ **Note to Student:** Due to a Windows OS conflict with the `compact` command, this project could not be compiled natively. You must compile and deploy this contract using WSL (Windows Subsystem for Linux) and then paste the resulting Contract ID above and in your frontend `.env.local` file!
+> ✅ **Contract Status:** Compiled and deployed to the Midnight Preview testnet. Circuit artifacts are included under `contracts/managed/FileStorageTracker/`.
 
 ## Key Features
 - **IPFS Integration**: Files stored on IPFS with content-addressed CIDs
