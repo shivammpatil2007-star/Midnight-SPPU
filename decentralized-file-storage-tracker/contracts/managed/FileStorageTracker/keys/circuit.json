@@ -1,0 +1,20 @@
+{
+  "contractName": "FileStorageTracker",
+  "version": "0.1.0",
+  "circuits": [
+    "register_file",
+    "verify_ownership",
+    "update_file",
+    "get_file",
+    "get_my_files"
+  ],
+  "publicState": [
+    "files",
+    "total_files"
+  ],
+  "privateWitnesses": [
+    "content_hash",
+    "content",
+    "new_content_hash"
+  ]
+}
