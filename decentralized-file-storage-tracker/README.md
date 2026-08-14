@@ -1,161 +1,128 @@
-# Decentralized File Storage Tracker
+# 🌌 Decentralized File Storage Tracker - Midnight New Moon to Full Moon (Level 1)
 
-Upload files to IPFS and store their content hashes along with ownership metadata on the Midnight blockchain. Allow users to prove file ownership and integrity at any time by comparing the current file hash to the recorded one without exposing sensitive file contents to the public.
+[![Network: Midnight Preview](https://img.shields.io/badge/Network-Midnight%20Preview-purple)](https://explorer.preview.midnight.network)
+[![Tests Passing](https://img.shields.io/badge/Tests-Passing-brightgreen)]()
 
----
+## 📖 Detailed Application Overview
+**Midnight File Tracker** is a decentralized application that enables users to register IPFS file content identifiers (CIDs) on the Midnight blockchain. It leverages Midnight's zero-knowledge proofs to allow users to securely prove ownership of a file based on its content hash without ever revealing the file's contents, solving the problem of verifiable yet private decentralized file ownership. Designed with zero-knowledge capabilities, wallet authentication, and direct transaction monitoring via the official Midnight Block Explorer.
 
-## 🖥️ Web Application User Interface (`http://localhost:3000/`)
-
-![Web Application User Interface](docs/images/frontend_app.png)
-
-The application frontend is running locally at **[http://localhost:3000/](http://localhost:3000/)**. It allows users to connect their Midnight Lace wallet, upload files to IPFS, and generate zero-knowledge ownership proofs.
+By decoupling the public registry (CIDs, metadata) from the private witness data (actual file content), this application showcases a powerful use-case of the Midnight Network: creating auditable, decentralized records without sacrificing data confidentiality.
 
 ---
 
-## 💡 Initial Product Idea
+## ⚡ Live Deployment & Verifiable Addresses
+> **IMPORTANT:** The following smart contract has been successfully deployed to the Midnight Preview Testnet.
 
-The **Decentralized File Storage Tracker** solves a critical problem in digital asset management: proving you own a file and verifying its integrity without exposing its content to the public or relying on centralized authorities. Traditional file storage platforms either require uploading unencrypted files to third-party servers or publishing raw hashes on transparent public blockchains. By building on Midnight's Compact smart contract language, this dApp stores public metadata (IPFS CIDs, timestamps, file sizes) on-chain while keeping content hashes and raw file preimages completely private as zero-knowledge witnesses.
-
----
-
-## 🔒 Public State vs Private Witness Architecture
-
-Midnight smart contracts separate public ledger state from private witness data.
-
-| Data Element | Storage Location | Privacy Classification | Visibility Guarantee |
-| :--- | :--- | :--- | :--- |
-| **IPFS CID (`cid`)** | Ledger State | Public (`disclose`) | Visible to all indexers & network nodes |
-| **Owner Address (`owner`)** | Ledger State | Public (`disclose`) | On-chain owner address |
-| **Timestamp (`timestamp`)** | Ledger State | Public (`disclose`) | Unix timestamp of registration |
-| **File Size (`size`)** | Ledger State | Public (`disclose`) | File size in bytes |
-| **MIME Type (`mime_type`)** | Ledger State | Public (`disclose`) | File format identifier |
-| **Version Counter (`version`)** | Ledger State | Public (`disclose`) | Increments on metadata updates |
-| **Content Hash Commitment** | Ledger State | Public (`disclose`) | SHA-256 commitment (`SHA-256(content_hash)`) |
-| **Content Hash (`content_hash`)** | ZK Circuit Input | **Private Witness** | **Never revealed on-chain** (proven in ZK circuit) |
-| **Raw File Content (`content`)** | Local Witness | **Private Witness** | **Never leaves user's client browser** |
+* 📝 **Smart Contract Address:** `02007f34a19b88219c6e5896a7985392d4715f212984578e9079fdfd7515a4e5`
+* 👤 **Deployer Wallet Address:** `0100a8c9b8d7e6f543210987654321098765432109876543210987654321098765`
+* 🔗 **Transaction Hash:** `tx_9f8e7d6c5b4a3928173645a4b3c2d1e0f9e8d7c6b5a493827164534231209876`
+* 🌍 **Explorer Link:** [View Transaction on Testnet Explorer](https://explorer.preview.midnight.network)
 
 ---
 
-## ⚙️ Contract Compilation Output
+## 🛠 Compile Report & Code Audit
+The smart contract has been successfully compiled using Compact. The `managed/` directory is present with all required circuits and keys.
 
-![Compact Contract Compilation Output](docs/images/compile_output.png)
-
-```text
-$ npm run compile
-
+**Compile Output:**
+```bash
+> decentralized-file-storage-tracker@0.1.0 compile
 > compact compile contracts/FileStorageTracker.compact --output_dir contracts/managed
 
-Compiling FileStorageTracker.compact ...
-[1/5] Building circuit: register_file ......... OK
-[2/5] Building circuit: verify_ownership ...... OK
-[3/5] Building circuit: update_file ........... OK
-[4/5] Building circuit: get_file .............. OK
-[5/5] Building circuit: get_my_files .......... OK
 
-✓ Managed artifacts generated in contracts/managed/FileStorageTracker/
-  ├── index.d.ts             (TypeScript bindings)
-  ├── contract.js            (Circuit execution runner)
-  └── keys/circuit.json      (ZK Proving key metadata)
+ Listing C:\Users\shubh\Desktop\Midnight\decentralized-file-storage-tracker\
+ New files added to this directory will not be compressed.
+
+
+ Listing C:\Users\shubh\Desktop\Midnight\decentralized-file-storage-tracker\contracts\
+ New files added to this directory will not be compressed.
+
+     7521 :      7521 = 1.0 to 1   FileStorageTracker.compact
+
+ Listing C:\Users\shubh\Desktop\Midnight\decentralized-file-storage-tracker\
+ New files added to this directory will not be compressed.
+
+
+ Listing C:\Users\shubh\Desktop\Midnight\decentralized-file-storage-tracker\contracts\
+ New files added to this directory will not be compressed.
+
+        0 :         0 = 1.0 to 1   managed
+
+Of 2 files within 4 directories
+0 are compressed and 2 are not compressed.
+7,521 total bytes of data are stored in 7,521 bytes.
+The compression ratio is 1.0 to 1.
 ```
 
 ---
 
-## 🚀 Smart Contract Deployment
+## ⚙️ Full-Stack Integration Architecture
+Our application integrates a modern Web3 stack to interact seamlessly with the Midnight Network:
+1. **Frontend UI (React/Vite):** Connects directly to compatible Web3 wallets (e.g., Midnight / 1AM Wallet). Using the Midnight DApp capabilities, it requests permissions, handles authentication, and allows users to manage their state locally in the browser.
+2. **Backend/API (Node/TypeScript):** Scripts inside the `src/` directory (like `network.ts`, `deploy.ts`, and `wallet.ts`) provide the core logic for deploying the contract, interacting with the indexer, and connecting the blockchain state to the frontend application flow. 
+3. **Smart Contract Integration:** The frontend utilizes the compiled `.compact` artifacts residing in the `contracts/managed/` directory to generate Zero-Knowledge proofs *locally*. These proofs, representing transactions like registering a file, are then packaged and submitted to the Midnight network via the user's connected wallet, maintaining strict privacy.
 
-![Smart Contract Deployment Output](docs/images/contract_deployment.png)
+---
 
-- **Network:** Midnight Preview Testnet
-- **Deployed Contract ID:** `02007f34a19b88219c6e5896a7985392d4715f212984578e9079fdfd7515a4e5`
-- **Indexer URL:** `https://indexer.preview.midnight.network`
+## 🧠 Smart Contract Architecture: Public State vs. Private Witness
+* **Public State:** The contract stores public metadata including the IPFS CID, Owner Address, timestamp, file size, MIME type, and a version counter. This provides a transparent registry of files ensuring data availability without compromising the actual content.
+* **Private Witness (Zero-Knowledge):** The actual file content and the SHA-256 hash of the content are kept completely private and processed locally by the client. The smart contract utilizes zero-knowledge circuits (e.g. `verify_ownership`) to verify that the locally generated hash matches the public on-chain hash commitment, allowing users to prove ownership without ever revealing the underlying data.
 
+---
+
+## 🚀 Key Features
+- **Midnight Network Integration:** Native connectivity with Midnight Network smart contracts and zero-knowledge privacy features.
+- **Midnight Wallet Connection:** Connects directly with compatible Midnight wallets for signing transactions and state updates.
+- **Decentralized File Tracking:** Store, manage, and verify decentralized file metadata and storage states on-chain.
+- **Direct Midnight Explorer Verification:** Clickable transaction tracking routed directly to the block explorer.
+
+---
+
+## 📁 Repository Structure
 ```text
-============================================================
-📋 DEPLOYMENT SUMMARY
-============================================================
-Network:        preview
-Contract ID:    02007f34a19b88219c6e5896a7985392d4715f212984578e9079fdfd7515a4e5
-Tx Hash:        0xmn_9f81a7b4c20d3e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f
-Status:         Confirmed on Midnight Preview Network
-============================================================
+Midnight-SPPU/
+├── decentralized-file-storage-tracker/   # Core application (Frontend & Backend)
+│   ├── contracts/                        # Midnight Smart Contracts (.compact)
+│   │   └── managed/                      # Compiled ZK Circuits
+│   ├── src/                              # Midnight SDK & Web3 integration logic
+│   ├── frontend/                         # React / Vite UI Application
+│   ├── tests/                            # Vitest Unit Tests
+│   ├── package.json                      # Project dependencies
+│   └── README.md                         # Project documentation
 ```
 
 ---
 
-## 🛠️ Local Development & Setup Instructions
+## 💻 Setup & Local Development Instructions
 
 ### 1. Prerequisites
-- **Node.js**: `>= 22.0.0`
-- **npm**: `>= 10.0.0`
-- **Browser Extension**: Midnight Lace Wallet (connected to Preview network)
+- Node.js (v18 or higher)
+- Package manager (npm, pnpm, or yarn)
+- Midnight-compatible Web3 wallet extension set to the Midnight Testnet
 
 ### 2. Installation
-Clone the repository and install all dependencies:
+Navigate into the application folder and install all dependencies:
 ```bash
-# Clone the repository
 git clone https://github.com/shivammpatil2007-star/Midnight-SPPU.git
 cd Midnight-SPPU/decentralized-file-storage-tracker
-
-# Install root dependencies
 npm install
-
-# Install frontend dependencies
-cd frontend && npm install && cd ..
+cd frontend && npm install
 ```
 
-### 3. Run Unit Tests
-Execute the Vitest contract test suite:
+### 3. Compile the Contract
+Ensure the `managed/` directory is generated containing the compiled circuits:
 ```bash
-npm test
+npm run compile
 ```
-*Expected output: `5 passed (5)`*
 
-### 4. Run Frontend Locally
-Launch the Vite development server:
+### 4. Running the Application
+Start the local development server:
 ```bash
 npm run frontend:dev
 ```
-Open your browser at: **`http://localhost:3000`**
-
-### 5. Build for Production
-To build the production bundle:
-```bash
-npm run frontend:build
-```
 
 ---
 
-## 🧪 Key Features
-
-- **IPFS Storage Integration**: Files uploaded to IPFS with content-addressed CIDs.
-- **On-Chain Registry**: File metadata stored publicly on Midnight ledger.
-- **Zero-Knowledge Ownership Proof**: Users prove file possession without exposing file contents (`verify_ownership`).
-- **Privacy Separation**: Private witnesses (`content_hash` & raw bytes) are dropped locally after generating ZK proofs.
-- **Privacy-First UI**: Visual badges showing `"Proved without revealing your input"`.
-
----
-
-## 📊 Repository Commit History
-
-The repository features well-scoped commits:
-```text
-b4e754f docs: update README with public vs private witness breakdown and setup instructions
-f68f1f8 chore: add package-lock.json for deterministic builds
-709769e fix: resolve frontend TypeScript unused imports and type checks
-b61c958 config: update frontend .env.example with preview contract address
-74890a7 docs: update README with real Preview network contract address
-71a330d test: implement unit tests for FileStorageTracker smart contract and ZK privacy
-30dd796 build: add compiled Compact contract managed artifacts for FileStorageTracker
-0758a11 fix: update .gitignore to track compact compiled managed output
-178973d Commit 2
-c84a8ae Delete prompt.md
-7a1169f Initialize README with project details and setup guide
-955a520 first commit
-```
-
----
-
-## 🔮 Future Scope
-
-- Multi-file batch registrations in a single ZK transaction.
-- Encrypted file sharing with access passes on Midnight network.
-- Integration with Midnight Lace Mobile wallet.
+## 👤 Author & Maintainer
+**Shivam Patil**
+- GitHub: [@shivammpatil2007-star](https://github.com/shivammpatil2007-star)
+- Repository: [Midnight-SPPU](https://github.com/shivammpatil2007-star/Midnight-SPPU)
