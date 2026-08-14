@@ -114,7 +114,17 @@ Ensure the `managed/` directory is generated containing the compiled circuits:
 npm run compile
 ```
 
-### 4. Running the Application
+### 4. Environment Setup
+Create a `.env` file in the `frontend/` directory with the following variables:
+```bash
+VITE_NETWORK=preview
+VITE_CONTRACT_ADDRESS=02007f34a19b88219c6e5896a7985392d4715f212984578e9079fdfd7515a4e5
+VITE_INDEXER_URL=https://indexer.preview.midnight.network
+VITE_IPFS_GATEWAY=https://ipfs.io/ipfs/
+VITE_IPFS_API_URL=https://api.pinata.cloud/pinning/pinFileToIPFS
+```
+
+### 5. Running the Application
 Start the local development server:
 ```bash
 npm run frontend:dev
