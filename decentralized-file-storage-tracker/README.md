@@ -4,6 +4,8 @@
 [![Tests Passing](https://img.shields.io/badge/Tests-Passing-brightgreen)]()
 
 ## 📖 Detailed Application Overview
+![Frontend App](decentralized-file-storage-tracker/docs/images/frontend_app.png)
+
 **Midnight File Tracker** is a decentralized application that enables users to register IPFS file content identifiers (CIDs) on the Midnight blockchain. It leverages Midnight's zero-knowledge proofs to allow users to securely prove ownership of a file based on its content hash without ever revealing the file's contents, solving the problem of verifiable yet private decentralized file ownership. Designed with zero-knowledge capabilities, wallet authentication, and direct transaction monitoring via the official Midnight Block Explorer.
 
 By decoupling the public registry (CIDs, metadata) from the private witness data (actual file content), this application showcases a powerful use-case of the Midnight Network: creating auditable, decentralized records without sacrificing data confidentiality.
@@ -17,6 +19,8 @@ By decoupling the public registry (CIDs, metadata) from the private witness data
 * 👤 **Deployer Wallet Address:** `0100a8c9b8d7e6f543210987654321098765432109876543210987654321098765`
 * 🔗 **Transaction Hash:** `tx_9f8e7d6c5b4a3928173645a4b3c2d1e0f9e8d7c6b5a493827164534231209876`
 * 🌍 **Explorer Link:** [View Transaction on Testnet Explorer](https://explorer.preview.midnight.network)
+
+![Contract Deployment](decentralized-file-storage-tracker/docs/images/contract_deployment.png)
 
 ---
 
@@ -52,6 +56,8 @@ Of 2 files within 4 directories
 7,521 total bytes of data are stored in 7,521 bytes.
 The compression ratio is 1.0 to 1.
 ```
+
+![Compile Output](decentralized-file-storage-tracker/docs/images/compile_output.png)
 
 ---
 
