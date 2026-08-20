@@ -20,11 +20,11 @@ export const NETWORK_CONFIG: Record<MidnightNetwork, {
     faucetUrl: "https://faucet.preview.midnight.network",
   },
   testnet: {
-    nodeUrl: "wss://node.testnet.midnight.network:9944",
-    indexerUrl: "https://indexer.testnet.midnight.network",
-    proofServerUrl: "https://proof-server.testnet.midnight.network:6300",
+    nodeUrl: "wss://node.preprod.midnight.network:9944",
+    indexerUrl: "https://indexer.preprod.midnight.network",
+    proofServerUrl: "https://proof-server.preprod.midnight.network:6300",
     networkId: NetworkId.TestNet,
-    faucetUrl: "https://faucet.testnet.midnight.network",
+    faucetUrl: "https://faucet.preprod.midnight.network",
   },
   mainnet: {
     nodeUrl: "wss://node.mainnet.midnight.network:9944",
