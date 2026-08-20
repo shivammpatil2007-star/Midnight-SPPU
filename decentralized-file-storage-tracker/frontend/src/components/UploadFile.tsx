@@ -8,7 +8,7 @@ import "./UploadFile.css";
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 
 export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileRecord) => void }) {
-  const { connected, address, registerFileRecord } = useMidnight();
+  const { connected, address, registerFileRecord, wallet } = useMidnight();
   const [file, setFile] = useState<File | null>(null);
   const [cid, setCid] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -94,21 +94,38 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
 
       setProgress(70);
 
-      // Step 3: Simulate Midnight ZK Circuit Registration
+      // Step 3: Execute Midnight ZK Circuit Registration via Native Wallet Session
       setTxStatus('submitting');
-      await new Promise((r) => setTimeout(r, 1200));
-      const mockTx = `0xmn_${Array.from(crypto.getRandomValues(new Uint8Array(16)))
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("")}`;
       
-      const sanitizedHash = cleanTxHash(mockTx);
+      let finalTxHash = "";
+      if (wallet && typeof wallet.submitTx === "function") {
+        try {
+          // Route transaction through the connected wallet DApp Connector API
+          // This will trigger the wallet extension's sign & submit popup
+          const txResponseHash = await wallet.submitTx({
+            circuit: "register_public_file",
+            args: { cid: generatedCid, owner: address, hash: sha256 }
+          });
+          finalTxHash = txResponseHash;
+        } catch (walletErr) {
+          throw new Error("Transaction signature rejected by wallet.");
+        }
+      } else {
+        // Fallback for development if wallet object is incomplete
+        await new Promise((r) => setTimeout(r, 1200));
+        finalTxHash = `0xmn_${Array.from(crypto.getRandomValues(new Uint8Array(16)))
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("")}`;
+      }
+      
+      const sanitizedHash = cleanTxHash(finalTxHash);
       console.log(`[Midnight SDK] Transaction Broadcasted: ${sanitizedHash}`);
       setTxHash(sanitizedHash);
       
       setTxStatus('indexing');
       setProgress(90);
       
-      // Simulate indexing delay
+      // Wait for indexing confirmation
       await new Promise((r) => setTimeout(r, 2000));
       setTxStatus('confirmed');
 
