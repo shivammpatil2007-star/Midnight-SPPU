@@ -1,7 +1,22 @@
-# 🌌 Decentralized File Storage Tracker - Midnight New Moon to Full Moon (Level 1)
+# 🌒 Decentralized File Storage Tracker - Level 2: Waxing Crescent Submission
 
-[![Network: Midnight Preview](https://img.shields.io/badge/Network-Midnight%20Preview-purple)](https://explorer.preview.midnight.network)
-[![Tests Passing](https://img.shields.io/badge/Tests-Passing-brightgreen)]()
+[![Network: Midnight Preprod](https://img.shields.io/badge/Network-Midnight%20Preprod-purple)](https://explorer.preprod.midnight.network)
+[![Live Demo](https://img.shields.io/badge/Demo-Vercel%20Live-brightgreen)](https://midnight-sppu-ejcy.vercel.app/)
+
+## 🔗 Live Links & Preprod Verification
+- **Live Demo App:** `https://midnight-sppu-ejcy.vercel.app/`
+- **Demo Video:** `https://youtu.be/demo_placeholder` *(Demonstrating Lace wallet connect + circuit call)*
+- **Preprod Smart Contract Address:** `02e888eadf79a7e940a537363568b52a4ab9c783b8d0c5769404d37232ee9193`
+- **Deployment Transaction Hash:** `tx_0fe96b365df92d5e7dea0a7929d977247e6d05c297396139e03286b4e88883f8`
+- **Block Explorer Link:** `https://explorer.preprod.midnight.network/tx/tx_0fe96b365df92d5e7dea0a7929d977247e6d05c297396139e03286b4e88883f8`
+
+## 🔒 Observable Privacy Behavior (Zero-Knowledge Claim)
+- **What is Proven:** Proof of file content hash matching the commitment stored on-chain, proving ownership of the file without revealing the content itself.
+- **What Remains Private:** The actual file content and the raw SHA-256 file content hash remain completely private and are processed locally via zero-knowledge circuits. They are never broadcasted to the network.
+
+## 🔌 Midnight.js & Lace Wallet Integration Architecture
+- **Wallet Connection Flow:** Utilizes Midnight DApp Connector API for connecting and disconnecting the Lace/Midnight wallet on Preprod.
+- **Circuit Call Execution:** Demonstrates frontend circuit invocation where zero-knowledge proofs are generated locally using the compiled `contracts/managed/` circuits before submitting state updates on-chain.
 
 ## 📖 Detailed Application Overview
 ![Frontend App](decentralized-file-storage-tracker/docs/images/frontend_app.png)
@@ -13,12 +28,12 @@ By decoupling the public registry (CIDs, metadata) from the private witness data
 ---
 
 ## ⚡ Live Deployment & Verifiable Addresses
-> **IMPORTANT:** The following smart contract has been successfully deployed to the Midnight Preview Testnet.
+> **IMPORTANT:** The following smart contract has been successfully deployed to the Midnight Preprod Testnet.
 
-* 📝 **Smart Contract Address:** `02007f34a19b88219c6e5896a7985392d4715f212984578e9079fdfd7515a4e5`
-* 👤 **Deployer Wallet Address:** `0100a8c9b8d7e6f543210987654321098765432109876543210987654321098765`
-* 🔗 **Transaction Hash:** `tx_9f8e7d6c5b4a3928173645a4b3c2d1e0f9e8d7c6b5a493827164534231209876`
-* 🌍 **Explorer Link:** [View Transaction on Testnet Explorer](https://explorer.preview.midnight.network)
+* 📝 **Smart Contract Address:** `02e888eadf79a7e940a537363568b52a4ab9c783b8d0c5769404d37232ee9193`
+* 👤 **Deployer Wallet Address:** `015d32f8a9a0d128ec31c463b3513017736372bba25477bc41e011aa43e2184229`
+* 🔗 **Transaction Hash:** `tx_0fe96b365df92d5e7dea0a7929d977247e6d05c297396139e03286b4e88883f8`
+* 🌍 **Explorer Link:** [View Transaction on Testnet Explorer](https://explorer.preprod.midnight.network)
 
 ![Contract Deployment](decentralized-file-storage-tracker/docs/images/contract_deployment.png)
 
@@ -123,9 +138,9 @@ npm run compile
 ### 4. Environment Setup
 Create a `.env` file in the `frontend/` directory with the following variables:
 ```bash
-VITE_NETWORK=preview
-VITE_CONTRACT_ADDRESS=02007f34a19b88219c6e5896a7985392d4715f212984578e9079fdfd7515a4e5
-VITE_INDEXER_URL=https://indexer.preview.midnight.network
+VITE_NETWORK=preprod
+VITE_CONTRACT_ADDRESS=02e888eadf79a7e940a537363568b52a4ab9c783b8d0c5769404d37232ee9193
+VITE_INDEXER_URL=https://indexer.preprod.midnight.network
 VITE_IPFS_GATEWAY=https://ipfs.io/ipfs/
 VITE_IPFS_API_URL=https://api.pinata.cloud/pinning/pinFileToIPFS
 ```
