@@ -1,10 +1,10 @@
 # 🌒 Decentralized File Storage Tracker - Level 2: Waxing Crescent Submission
 
 [![Network: Midnight Preprod](https://img.shields.io/badge/Network-Midnight%20Preprod-purple)](https://explorer.preprod.midnight.network)
-[![Live Demo](https://img.shields.io/badge/Demo-Vercel%20Live-brightgreen)](https://midnight-sppu-ejcy.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/Demo-Vercel%20Live-brightgreen)](https://midnight-sppu.vercel.app/)
 
 ## 🔗 Live Links & Preprod Verification
-- **Live Demo App:** `https://midnight-sppu-ejcy.vercel.app/`
+- **Live Demo App:** [midnight-sppu.vercel.app](https://midnight-sppu.vercel.app/)
 - **Demo Video:** `https://youtu.be/demo_placeholder` *(Demonstrating Lace wallet connect + circuit call)*
 - **Preprod Smart Contract Address:** `02e888eadf79a7e940a537363568b52a4ab9c783b8d0c5769404d37232ee9193`
 - **Deployment Transaction Hash:** `tx_0fe96b365df92d5e7dea0a7929d977247e6d05c297396139e03286b4e88883f8`
