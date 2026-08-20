@@ -6,9 +6,9 @@
 ## 🔗 Live Links & Preprod Verification
 - **Live Demo App:** `https://decentralized-file-storage-tracker.vercel.app/`
 - **Demo Video:** `https://youtu.be/demo_placeholder` *(Demonstrating Lace wallet connect + circuit call)*
-- **Preprod Smart Contract Address:** `02007f34a19b88219c6e5896a7985392d4715f212984578e9079fdfd7515a4e5`
-- **Deployment Transaction Hash:** `tx_9f8e7d6c5b4a3928173645a4b3c2d1e0f9e8d7c6b5a493827164534231209876`
-- **Block Explorer Link:** `https://explorer.preprod.midnight.network/tx/tx_9f8e7d6c5b4a3928173645a4b3c2d1e0f9e8d7c6b5a493827164534231209876`
+- **Preprod Smart Contract Address:** `02e888eadf79a7e940a537363568b52a4ab9c783b8d0c5769404d37232ee9193`
+- **Deployment Transaction Hash:** `tx_0fe96b365df92d5e7dea0a7929d977247e6d05c297396139e03286b4e88883f8`
+- **Block Explorer Link:** `https://explorer.preprod.midnight.network/tx/tx_0fe96b365df92d5e7dea0a7929d977247e6d05c297396139e03286b4e88883f8`
 
 ## 🔒 Observable Privacy Behavior (Zero-Knowledge Claim)
 - **What is Proven:** Proof of file content hash matching the commitment stored on-chain, proving ownership of the file without revealing the content itself.
@@ -28,12 +28,12 @@ By decoupling the public registry (CIDs, metadata) from the private witness data
 ---
 
 ## ⚡ Live Deployment & Verifiable Addresses
-> **IMPORTANT:** The following smart contract has been successfully deployed to the Midnight Preview Testnet.
+> **IMPORTANT:** The following smart contract has been successfully deployed to the Midnight Preprod Testnet.
 
-* 📝 **Smart Contract Address:** `02007f34a19b88219c6e5896a7985392d4715f212984578e9079fdfd7515a4e5`
-* 👤 **Deployer Wallet Address:** `0100a8c9b8d7e6f543210987654321098765432109876543210987654321098765`
-* 🔗 **Transaction Hash:** `tx_9f8e7d6c5b4a3928173645a4b3c2d1e0f9e8d7c6b5a493827164534231209876`
-* 🌍 **Explorer Link:** [View Transaction on Testnet Explorer](https://explorer.preview.midnight.network)
+* 📝 **Smart Contract Address:** `02e888eadf79a7e940a537363568b52a4ab9c783b8d0c5769404d37232ee9193`
+* 👤 **Deployer Wallet Address:** `015d32f8a9a0d128ec31c463b3513017736372bba25477bc41e011aa43e2184229`
+* 🔗 **Transaction Hash:** `tx_0fe96b365df92d5e7dea0a7929d977247e6d05c297396139e03286b4e88883f8`
+* 🌍 **Explorer Link:** [View Transaction on Testnet Explorer](https://explorer.preprod.midnight.network)
 
 ![Contract Deployment](docs/images/contract_deployment.png)
 
@@ -138,9 +138,9 @@ npm run compile
 ### 4. Environment Setup
 Create a `.env` file in the `frontend/` directory with the following variables:
 ```bash
-VITE_NETWORK=preview
-VITE_CONTRACT_ADDRESS=02007f34a19b88219c6e5896a7985392d4715f212984578e9079fdfd7515a4e5
-VITE_INDEXER_URL=https://indexer.preview.midnight.network
+VITE_NETWORK=preprod
+VITE_CONTRACT_ADDRESS=02e888eadf79a7e940a537363568b52a4ab9c783b8d0c5769404d37232ee9193
+VITE_INDEXER_URL=https://indexer.preprod.midnight.network
 VITE_IPFS_GATEWAY=https://ipfs.io/ipfs/
 VITE_IPFS_API_URL=https://api.pinata.cloud/pinning/pinFileToIPFS
 ```
