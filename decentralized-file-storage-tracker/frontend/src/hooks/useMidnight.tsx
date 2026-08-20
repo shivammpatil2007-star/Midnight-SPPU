@@ -155,50 +155,49 @@ function useMidnightInternal(defaultNetwork: Network = "preview") {
     );
   }, []);
 
-  // Connect to wallet (supports extension + demo fallback)
+  // Connect to wallet (requires extension)
   const connect = useCallback(async (network: Network = defaultNetwork) => {
     const providers = discoverWallets();
     
-    if (providers.length > 0) {
-      const selectedProvider = providers[0];
-      setProvider(selectedProvider);
-      try {
-        setWalletState(prev => ({ ...prev, error: null, network }));
-        networkRef.current = network;
-
-        const connectedWallet = await selectedProvider.connect();
-        setWallet(connectedWallet);
-
-        const address = await connectedWallet.getAddress();
-        const balance = await connectedWallet.getBalance();
-
-        setWalletState({
-          connected: true,
-          address,
-          shieldedAddress: `mn_shielded_${address.substring(0, 10)}`,
-          network,
-          balance,
-          error: null,
-        });
-
-        localStorage.setItem(WALLET_KEY, "true");
-        return true;
-      } catch (error) {
-        console.warn("Wallet extension connect failed, falling back to simulated connection:", error);
-      }
+    if (providers.length === 0) {
+      setWalletState(prev => ({ 
+        ...prev, 
+        error: "Midnight Lace extension not found. Please install a compatible wallet." 
+      }));
+      return false;
     }
 
-    // Demo/Simulated Wallet Connection for browser testing
-    setWalletState({
-      connected: true,
-      address: "mn1q9x2v8k4y7p0m3w5z6l1a8c9e2f4r6t8u0i",
-      shieldedAddress: "mn_shielded_88a91c2b3d4e5f6g7h8i9j0k1l2m3n4o5p",
-      network,
-      balance: BigInt(12450750000),
-      error: null,
-    });
-    localStorage.setItem(WALLET_KEY, "true");
-    return true;
+    const selectedProvider = providers[0];
+    setProvider(selectedProvider);
+    try {
+      setWalletState(prev => ({ ...prev, error: null, network }));
+      networkRef.current = network;
+
+      const connectedWallet = await selectedProvider.connect();
+      setWallet(connectedWallet);
+
+      const address = await connectedWallet.getAddress();
+      const balance = await connectedWallet.getBalance();
+
+      setWalletState({
+        connected: true,
+        address,
+        shieldedAddress: `mn_shielded_${address.substring(0, 10)}`,
+        network,
+        balance,
+        error: null,
+      });
+
+      localStorage.setItem(WALLET_KEY, "true");
+      return true;
+    } catch (error) {
+      console.warn("Wallet extension connect failed:", error);
+      setWalletState(prev => ({ 
+        ...prev, 
+        error: "Failed to connect to wallet. Please try again." 
+      }));
+      return false;
+    }
   }, [discoverWallets, defaultNetwork]);
 
   // Disconnect wallet
