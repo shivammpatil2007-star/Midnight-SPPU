@@ -112,6 +112,10 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
         }
       } else {
         // Fallback for development if wallet object is incomplete
+        const approved = window.confirm(`Midnight Lace (Simulated Wallet)\n\nApprove transaction: register_public_file\nNetwork: Preprod\n\nDo you want to sign and submit this transaction?`);
+        if (!approved) {
+          throw new Error("Transaction signature rejected by user.");
+        }
         await new Promise((r) => setTimeout(r, 1200));
         finalTxHash = `0xmn_${Array.from(crypto.getRandomValues(new Uint8Array(16)))
           .map((b) => b.toString(16).padStart(2, "0"))

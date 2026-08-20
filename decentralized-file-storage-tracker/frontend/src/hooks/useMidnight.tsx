@@ -171,11 +171,26 @@ function useMidnightInternal(defaultNetwork: Network = "preview") {
     const providers = discoverWallets();
     
     if (providers.length === 0) {
-      setWalletState(prev => ({ 
-        ...prev, 
-        error: "Midnight Lace / 1AM Wallet extension not found. Please install a compatible wallet on Preprod." 
-      }));
-      return false;
+      // Demo/Simulated Wallet Connection that requires MANUAL permission (for demo videos)
+      const approved = window.confirm("Midnight Lace (Simulated Wallet)\n\nAllow decentralized-file-storage-tracker to connect to your wallet?");
+      if (!approved) {
+        setWalletState(prev => ({ 
+          ...prev, 
+          error: "Wallet connection request rejected by user." 
+        }));
+        return false;
+      }
+
+      setWalletState({
+        connected: true,
+        address: "mn1q9x2v8k4y7p0m3w5z6l1a8c9e2f4r6t8u0i",
+        shieldedAddress: "mn_shielded_88a91c2b3d4e5f6g7h8i9j0k1l2m3n4o5p",
+        network,
+        balance: BigInt(12450750000),
+        error: null,
+      });
+      localStorage.setItem(WALLET_KEY, "true");
+      return true;
     }
 
     const selectedProvider = providers[0];
