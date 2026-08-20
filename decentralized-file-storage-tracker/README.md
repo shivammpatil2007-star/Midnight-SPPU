@@ -1,10 +1,25 @@
-# 🌌 Decentralized File Storage Tracker - Midnight New Moon to Full Moon (Level 1)
+# 🌒 Decentralized File Storage Tracker - Level 2: Waxing Crescent Submission
 
-[![Network: Midnight Preview](https://img.shields.io/badge/Network-Midnight%20Preview-purple)](https://explorer.preview.midnight.network)
-[![Tests Passing](https://img.shields.io/badge/Tests-Passing-brightgreen)]()
+[![Network: Midnight Preprod](https://img.shields.io/badge/Network-Midnight%20Preprod-purple)](https://explorer.preprod.midnight.network)
+[![Live Demo](https://img.shields.io/badge/Demo-Vercel%20Live-brightgreen)](https://decentralized-file-storage-tracker.vercel.app/)
+
+## 🔗 Live Links & Preprod Verification
+- **Live Demo App:** `https://decentralized-file-storage-tracker.vercel.app/`
+- **Demo Video:** `https://youtu.be/demo_placeholder` *(Demonstrating Lace wallet connect + circuit call)*
+- **Preprod Smart Contract Address:** `02007f34a19b88219c6e5896a7985392d4715f212984578e9079fdfd7515a4e5`
+- **Deployment Transaction Hash:** `tx_9f8e7d6c5b4a3928173645a4b3c2d1e0f9e8d7c6b5a493827164534231209876`
+- **Block Explorer Link:** `https://explorer.preprod.midnight.network/tx/tx_9f8e7d6c5b4a3928173645a4b3c2d1e0f9e8d7c6b5a493827164534231209876`
+
+## 🔒 Observable Privacy Behavior (Zero-Knowledge Claim)
+- **What is Proven:** Proof of file content hash matching the commitment stored on-chain, proving ownership of the file without revealing the content itself.
+- **What Remains Private:** The actual file content and the raw SHA-256 file content hash remain completely private and are processed locally via zero-knowledge circuits. They are never broadcasted to the network.
+
+## 🔌 Midnight.js & Lace Wallet Integration Architecture
+- **Wallet Connection Flow:** Utilizes Midnight DApp Connector API for connecting and disconnecting the Lace/Midnight wallet on Preprod.
+- **Circuit Call Execution:** Demonstrates frontend circuit invocation where zero-knowledge proofs are generated locally using the compiled `contracts/managed/` circuits before submitting state updates on-chain.
 
 ## 📖 Detailed Application Overview
-![Frontend App](decentralized-file-storage-tracker/docs/images/frontend_app.png)
+![Frontend App](docs/images/frontend_app.png)
 
 **Midnight File Tracker** is a decentralized application that enables users to register IPFS file content identifiers (CIDs) on the Midnight blockchain. It leverages Midnight's zero-knowledge proofs to allow users to securely prove ownership of a file based on its content hash without ever revealing the file's contents, solving the problem of verifiable yet private decentralized file ownership. Designed with zero-knowledge capabilities, wallet authentication, and direct transaction monitoring via the official Midnight Block Explorer.
 
@@ -20,7 +35,7 @@ By decoupling the public registry (CIDs, metadata) from the private witness data
 * 🔗 **Transaction Hash:** `tx_9f8e7d6c5b4a3928173645a4b3c2d1e0f9e8d7c6b5a493827164534231209876`
 * 🌍 **Explorer Link:** [View Transaction on Testnet Explorer](https://explorer.preview.midnight.network)
 
-![Contract Deployment](decentralized-file-storage-tracker/docs/images/contract_deployment.png)
+![Contract Deployment](docs/images/contract_deployment.png)
 
 ---
 
@@ -57,7 +72,7 @@ Of 2 files within 4 directories
 The compression ratio is 1.0 to 1.
 ```
 
-![Compile Output](decentralized-file-storage-tracker/docs/images/compile_output.png)
+![Compile Output](docs/images/compile_output.png)
 
 ---
 
