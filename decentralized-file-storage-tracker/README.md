@@ -5,8 +5,6 @@
   
   [![Network: Midnight Preprod](https://img.shields.io/badge/Network-Midnight%20Preprod-8B5CF6?style=for-the-badge&logo=blockchain)](https://explorer.preprod.midnight.network)
   [![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-000000?style=for-the-badge&logo=vercel)](https://midnight-sppu.vercel.app/)
-  [![Framework](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB?style=for-the-badge&logo=react)](#)
-  [![Smart Contracts](https://img.shields.io/badge/Smart%20Contracts-Compact-F59E0B?style=for-the-badge)](#)
 </div>
 
 <br />
