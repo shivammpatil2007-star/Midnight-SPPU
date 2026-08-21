@@ -22,7 +22,7 @@ By decoupling the public registry from the private witness data, this applicatio
 | Resource | Link |
 | :--- | :--- |
 | 🟢 **Live Demo App** | [midnight-sppu.vercel.app](https://midnight-sppu.vercel.app/) |
-| 🎥 **Demo Video** | [Watch on Loom](https://www.loom.com/share/6345e5fea1ca4381b9ce9be7ef45f2eb) |
+| 🎥 **Demo Video** | [https://www.loom.com/share/6345e5fea1ca4381b9ce9be7ef45f2eb](https://www.loom.com/share/6345e5fea1ca4381b9ce9be7ef45f2eb) |
 | 📝 **Smart Contract** | `02e888eadf79a7e940a537363568b52a4ab9c783b8d0c5769404d37232ee9193` |
 | 🔗 **Deployment TX** | `tx_0fe96b365df92d5e7dea0a7929d977247e6d05c297396139e03286b4e88883f8` |
 | 🌍 **Block Explorer** | [View Transaction on Preprod Explorer](https://explorer.preprod.midnight.network/tx/tx_0fe96b365df92d5e7dea0a7929d977247e6d05c297396139e03286b4e88883f8) |
