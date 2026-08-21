@@ -147,6 +147,6 @@ npm run frontend:dev
 ---
 
 <div align="center">
-  <p>Built with ❤️ by <b>Shivam Patil</b> for the Midnight Network Hackathon</p>
+  <p>Built with ❤️ by <b>Shivam Patil</b> for the Midnight Network</p>
   <a href="https://github.com/shivammpatil2007-star">GitHub Profile</a>
 </div>
