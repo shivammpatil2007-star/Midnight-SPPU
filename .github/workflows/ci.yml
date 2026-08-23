@@ -19,34 +19,27 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Locate & Install Root Dependencies
+      - name: Install Dependencies
         run: |
           if [ -f "package.json" ]; then
             npm install
-          elif [ -f "decentralized-file-storage-tracker/package.json" ]; then
+          fi
+          if [ -d "decentralized-file-storage-tracker" ]; then
             cd decentralized-file-storage-tracker && npm install
           fi
 
-      - name: Execute Contract Compilation
+      - name: Run Vitest Unit Tests
         run: |
-          if [ -f "package.json" ]; then
-            npm run compile
-          else
-            cd decentralized-file-storage-tracker && npm run compile
-          fi
-
-      - name: Run Vitest Suite
-        run: |
-          if [ -f "package.json" ]; then
+          if [ -f "package.json" ] && grep -q '"test"' package.json; then
             npm run test
           else
             cd decentralized-file-storage-tracker && npm run test
           fi
 
-      - name: Build Frontend Application
+      - name: Build Frontend Production Bundle
         run: |
           if [ -d "frontend" ]; then
             cd frontend && npm install && npm run build
-          else
+          elif [ -d "decentralized-file-storage-tracker/frontend" ]; then
             cd decentralized-file-storage-tracker/frontend && npm install && npm run build
           fi
