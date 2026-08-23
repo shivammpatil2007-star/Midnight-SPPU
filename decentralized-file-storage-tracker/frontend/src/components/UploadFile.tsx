@@ -371,7 +371,7 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
               style={{ marginTop: '24px', width: '100%', padding: '14px', fontSize: '1rem', background: privacyMode === 'shielded' ? 'linear-gradient(135deg, #7F00FF, #E100FF)' : undefined }}
             >
               {uploading ? (
-                progress < 50 ? "Generating ZK Proof locally..." : "Submitting Transaction..."
+                progress < 50 ? "Generating Local ZK Proof..." : "Submitting Transaction..."
               ) : (
                 `Commit ZK Record to Midnight (${privacyMode.toUpperCase()})`
               )}
@@ -383,7 +383,7 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
               <div className="progress-bar">
                 <div className="progress-fill" style={{ width: `${progress}%` }}></div>
               </div>
-              <div className="progress-text">{progress}% {progress < 50 ? "Generating ZK Proof locally..." : "Submitting Transaction..."}</div>
+              <div className="progress-text">{progress}% {progress < 50 ? "Generating Local ZK Proof..." : "Submitting Transaction..."}</div>
             </div>
           )}
         </>

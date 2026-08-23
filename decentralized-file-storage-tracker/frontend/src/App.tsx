@@ -13,7 +13,7 @@ function App() {
         <div className="header-content">
           <div className="logo">
             <span className="logo-icon">🔐</span>
-            <span className="logo-text">Midnight File Tracker</span>
+            <span className="logo-text">Confidential Credentials Platform</span>
           </div>
           <nav className="header-nav" role="navigation" aria-label="Main navigation">
             <button
