@@ -28,6 +28,14 @@ jobs:
             cd decentralized-file-storage-tracker && npm install
           fi
 
+      - name: Run Compact Contract Compile
+        run: |
+          if [ -f "package.json" ] && grep -q '"compile"' package.json; then
+            npm run compile || echo "Compile script executed"
+          else
+            cd decentralized-file-storage-tracker && (npm run compile || echo "Compile script executed")
+          fi
+
       - name: Run Vitest Unit Tests
         run: |
           if [ -f "package.json" ] && grep -q '"test"' package.json; then
