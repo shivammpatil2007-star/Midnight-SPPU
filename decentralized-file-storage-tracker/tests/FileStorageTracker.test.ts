@@ -168,3 +168,4 @@ describe('FileStorageTracker Contract', () => {
     expect(fileRecord.content_hash_commitment).not.toEqual(privateHash);
   });
 });
+// Level 3: Vitest automated test suite for Midnight File Storage Tracker
