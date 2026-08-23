@@ -125,6 +125,13 @@ Duration    1.15s
 <br />
 
 <div align="center">
+  <img src="docs/images/test_execution.png" alt="Test Execution Passing" width="800" />
+  <p><em>Vitest Automated Unit Tests Executing Successfully.</em></p>
+</div>
+
+<br />
+
+<div align="center">
   <img src="docs/images/contract_deployment.png" alt="Contract Deployment" width="600" />
   <p><em>Smart Contract deployed on Midnight Preprod Testnet.</em></p>
 </div>
