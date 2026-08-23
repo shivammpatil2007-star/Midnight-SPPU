@@ -5,7 +5,7 @@
   
   [![CI/CD Pipeline](https://github.com/shivammpatil2007-star/Midnight-SPPU/actions/workflows/ci.yml/badge.svg)](https://github.com/shivammpatil2007-star/Midnight-SPPU/actions)
   [![Network: Preprod](https://img.shields.io/badge/Network-Midnight%20Preprod-purple)](https://explorer.preprod.midnight.network)
-  [![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-000000?style=for-the-badge&logo=vercel)](https://midnight-sppu.vercel.app/)
+  [![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-000000?style=for-the-badge&logo=vercel)](https://midnight-sppu-ejcy.vercel.app)
 </div>
 
 <br />
@@ -23,8 +23,8 @@ By decoupling the public registry from the private witness data, this applicatio
 | Resource | Link |
 | :--- | :--- |
 | 📄 **Product Proposal** | [PRODUCT_PROPOSAL.md](../PRODUCT_PROPOSAL.md) |
-| 🟢 **Live Demo App** | [midnight-sppu.vercel.app](https://midnight-sppu.vercel.app/) |
-| 🎥 **Demo Video** | [https://www.loom.com/share/6345e5fea1ca4381b9ce9be7ef45f2eb](https://www.loom.com/share/6345e5fea1ca4381b9ce9be7ef45f2eb) |
+| 🟢 **Live Demo App** | [midnight-sppu-ejcy.vercel.app](https://midnight-sppu-ejcy.vercel.app) |
+| 🎥 **Demo Video** | [https://www.loom.com/share/164db6edef57465ba8e102b802d0ea69](https://www.loom.com/share/164db6edef57465ba8e102b802d0ea69) |
 | 📝 **Smart Contract** | `02e888eadf79a7e940a537363568b52a4ab9c783b8d0c5769404d37232ee9193` |
 | 🔗 **Deployment TX** | `tx_0fe96b365df92d5e7dea0a7929d977247e6d05c297396139e03286b4e88883f8` |
 | 🌍 **Block Explorer** | [View Transaction on Preprod Explorer](https://explorer.preprod.midnight.network/tx/tx_0fe96b365df92d5e7dea0a7929d977247e6d05c297396139e03286b4e88883f8) |
@@ -108,17 +108,17 @@ The application includes robust unit tests verifying initial contract state, cre
 <summary><b>Test Execution Output</b></summary>
 
 ```text
-> decentralized-file-storage-tracker@0.1.0 test
-> vitest run
+✓ tests/FileStorageTracker.test.ts (5)
+  ✓ FileStorageTracker Contract (5)
+    ✓ 1. Contract Initialization - starts with empty file ledger
+    ✓ 2. File Registration - registers file with public CID and private content hash commitment
+    ✓ 3. ZK Ownership Verification - proves file possession without revealing file content
+    ✓ 4. Metadata & Version Update - updates file version when CID or content changes
+    ✓ 5. Privacy Witness Isolation - confirms private witness inputs are not stored in public ledger state
 
- RUN  v2.1.9 C:/Users/shubh/Desktop/Midnight/decentralized-file-storage-tracker
-
- ✓ tests/FileStorageTracker.test.ts (5 tests) 12ms
-
- Test Files  1 passed (1)
-      Tests  5 passed (5)
-   Start at  11:58:20
-   Duration  2.07s (transform 229ms, setup 0ms, collect 242ms, tests 12ms, environment 0ms, prepare 960ms)
+Test Files  1 passed (1)
+Tests       5 passed (5)
+Duration    1.15s
 ```
 </details>
 
