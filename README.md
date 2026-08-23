@@ -3,7 +3,8 @@
   <p><strong>Decentralized, Zero-Knowledge File Verification & Storage Registry</strong></p>
   <p><em>Level 2: Waxing Crescent Submission</em></p>
   
-  [![Network: Midnight Preprod](https://img.shields.io/badge/Network-Midnight%20Preprod-8B5CF6?style=for-the-badge&logo=blockchain)](https://explorer.preprod.midnight.network)
+  [![CI/CD Pipeline](https://github.com/shivammpatil2007-star/Midnight-SPPU/actions/workflows/ci.yml/badge.svg)](https://github.com/shivammpatil2007-star/Midnight-SPPU/actions)
+  [![Network: Preprod](https://img.shields.io/badge/Network-Midnight%20Preprod-purple)](https://explorer.preprod.midnight.network)
   [![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-000000?style=for-the-badge&logo=vercel)](https://midnight-sppu.vercel.app/)
 </div>
 
@@ -21,6 +22,7 @@ By decoupling the public registry from the private witness data, this applicatio
 
 | Resource | Link |
 | :--- | :--- |
+| 📄 **Product Proposal** | [PRODUCT_PROPOSAL.md](./PRODUCT_PROPOSAL.md) |
 | 🟢 **Live Demo App** | [midnight-sppu.vercel.app](https://midnight-sppu.vercel.app/) |
 | 🎥 **Demo Video** | [https://www.loom.com/share/6345e5fea1ca4381b9ce9be7ef45f2eb](https://www.loom.com/share/6345e5fea1ca4381b9ce9be7ef45f2eb) |
 | 📝 **Smart Contract** | `02e888eadf79a7e940a537363568b52a4ab9c783b8d0c5769404d37232ee9193` |
@@ -38,13 +40,12 @@ By decoupling the public registry from the private witness data, this applicatio
 
 ### 🛡️ Selective Disclosure Privacy Matrix
 
-| Data Field | Stored On-Chain (Public) | Kept Private (Witness/Client) | Selective Disclosure Method |
-| :--- | :---: | :---: | :--- |
-| **IPFS CID (File Location)** | ✅ Yes (Cleartext) | ❌ No | Publicly verifiable registry pointer |
-| **File Metadata (Size, Type)**| ✅ Yes (Cleartext) | ❌ No | Transparent application state |
-| **Raw Document Payload** | ❌ No (Never) | ✅ Yes (Local Only) | Never disclosed; resides only with owner |
-| **Raw SHA-256 Content Hash** | ❌ No (Uncommitted)| ✅ Yes (Local Only) | Disclosed selectively as ZK witness |
-| **Cryptographic Commitment** | ✅ Yes (Hashed) | ❌ No | Verified via ZK Proof (`verify_ownership`) |
+| On-Chain Public Data (What Observers See) | Client-Side Private Witness (What Remains Hidden) |
+| :--- | :--- |
+| IPFS CID & Metadata Commitment | Raw Document Payload / File Contents |
+| On-Chain Ownership Hash Commitment | Unhashed Private SHA-256 Key |
+| Timestamp & Version Counter | User Private Key / Wallet Seed |
+| ZK Circuit Verification Outcome (true/false) | Proof Generation Local Inputs |
 
 ---
 
@@ -94,6 +95,30 @@ Of 2 files within 4 directories
 0 are compressed and 2 are not compressed.
 7,521 total bytes of data are stored in 7,521 bytes.
 The compression ratio is 1.0 to 1.
+```
+</details>
+
+<br />
+
+## 🧪 Automated Testing & CI/CD
+
+The application includes robust unit tests verifying initial contract state, credential registration circuit logic, and zero-knowledge witness validation. These are automatically run via our GitHub Actions CI/CD Pipeline.
+
+<details open>
+<summary><b>Test Execution Output</b></summary>
+
+```text
+> decentralized-file-storage-tracker@0.1.0 test
+> vitest run
+
+ RUN  v2.1.9 C:/Users/shubh/Desktop/Midnight/decentralized-file-storage-tracker
+
+ ✓ tests/FileStorageTracker.test.ts (5 tests) 12ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  11:58:20
+   Duration  2.07s (transform 229ms, setup 0ms, collect 242ms, tests 12ms, environment 0ms, prepare 960ms)
 ```
 </details>
 
