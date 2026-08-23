@@ -1,0 +1,42 @@
+name: Midnight File Storage CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: 'decentralized-file-storage-tracker/package-lock.json'
+
+    - name: Install Root Dependencies
+      working-directory: ./decentralized-file-storage-tracker
+      run: npm install
+
+    - name: Install Frontend Dependencies
+      working-directory: ./decentralized-file-storage-tracker/frontend
+      run: npm install
+
+    - name: Run ZK Circuit & Contract Tests
+      working-directory: ./decentralized-file-storage-tracker
+      run: npm run test
+
+    - name: Build Frontend Application
+      working-directory: ./decentralized-file-storage-tracker
+      run: npm run frontend:build

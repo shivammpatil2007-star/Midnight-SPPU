@@ -36,6 +36,16 @@ By decoupling the public registry from the private witness data, this applicatio
 * 🔓 **What is Proven (Public):** The contract stores public metadata including the IPFS CID, Owner Address, timestamp, file size, and MIME type. This provides a transparent registry of files ensuring data availability.
 * 🛡️ **What Remains Private:** The actual file content and the raw SHA-256 file content hash remain completely private. They are processed locally via zero-knowledge circuits (e.g. `verify_ownership`). They are **never** broadcasted to the network.
 
+### 🛡️ Selective Disclosure Privacy Matrix
+
+| Data Field | Stored On-Chain (Public) | Kept Private (Witness/Client) | Selective Disclosure Method |
+| :--- | :---: | :---: | :--- |
+| **IPFS CID (File Location)** | ✅ Yes (Cleartext) | ❌ No | Publicly verifiable registry pointer |
+| **File Metadata (Size, Type)**| ✅ Yes (Cleartext) | ❌ No | Transparent application state |
+| **Raw Document Payload** | ❌ No (Never) | ✅ Yes (Local Only) | Never disclosed; resides only with owner |
+| **Raw SHA-256 Content Hash** | ❌ No (Uncommitted)| ✅ Yes (Local Only) | Disclosed selectively as ZK witness |
+| **Cryptographic Commitment** | ✅ Yes (Hashed) | ❌ No | Verified via ZK Proof (`verify_ownership`) |
+
 ---
 
 ## 🔌 Midnight.js & Lace Wallet Integration Architecture
