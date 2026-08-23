@@ -9,11 +9,6 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    
-    # We must specify the working directory because the project is in a subfolder
-    defaults:
-      run:
-        working-directory: ./decentralized-file-storage-tracker
 
     steps:
       - name: Checkout Repository
@@ -23,20 +18,35 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: './decentralized-file-storage-tracker/package-lock.json'
 
-      - name: Install Root Dependencies
-        run: npm install
+      - name: Locate & Install Root Dependencies
+        run: |
+          if [ -f "package.json" ]; then
+            npm install
+          elif [ -f "decentralized-file-storage-tracker/package.json" ]; then
+            cd decentralized-file-storage-tracker && npm install
+          fi
 
-      - name: Install Frontend Dependencies
-        run: cd frontend && npm install && cd ..
+      - name: Execute Contract Compilation
+        run: |
+          if [ -f "package.json" ]; then
+            npm run compile
+          else
+            cd decentralized-file-storage-tracker && npm run compile
+          fi
 
-      - name: Compile Compact Smart Contract
-        run: npm run compile
+      - name: Run Vitest Suite
+        run: |
+          if [ -f "package.json" ]; then
+            npm run test
+          else
+            cd decentralized-file-storage-tracker && npm run test
+          fi
 
-      - name: Execute Automated Unit Tests
-        run: npm run test
-
-      - name: Verify Frontend Production Build
-        run: npm run frontend:build
+      - name: Build Frontend Application
+        run: |
+          if [ -d "frontend" ]; then
+            cd frontend && npm install && npm run build
+          else
+            cd decentralized-file-storage-tracker/frontend && npm install && npm run build
+          fi
