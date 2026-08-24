@@ -7,16 +7,20 @@ import "./UploadFile.css";
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 
+type TxStatus = 'idle' | 'generating_proof' | 'submitting' | 'confirmed' | 'error';
+
 export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileRecord) => void }) {
   const { connected, address, registerFileRecord, wallet } = useMidnight();
   const [file, setFile] = useState<File | null>(null);
   const [cid, setCid] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
+  
+  // State precisely matching Task 3 requirements
+  const [txStatus, setTxStatus] = useState<TxStatus>('idle');
   const [txHash, setTxHash] = useState<string | null>(null);
-  const [txStatus, setTxStatus] = useState<'idle' | 'generating_proof' | 'submitting' | 'indexing' | 'confirmed' | 'error'>('idle');
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [explorerUrl, setExplorerUrl] = useState<string | null>(null);
+  
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   // Privacy & Encryption Options
@@ -38,7 +42,7 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
   const handleFileSelect = useCallback((selectedFile: File) => {
     const err = validateFile(selectedFile);
     if (err) {
-      setError(err);
+      setErrorMessage(err);
       return;
     }
     setFile(selectedFile);
@@ -47,11 +51,11 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
     } else {
       setPreviewUrl(null);
     }
-    setError(null);
+    setErrorMessage(null);
     setCid(null);
     setTxHash(null);
     setTxStatus('idle');
-    setSuccess(false);
+    setExplorerUrl(null);
   }, [validateFile]);
 
   const computeContentHash = async (file: File): Promise<string> => {
@@ -67,15 +71,15 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
 
   const handleUpload = async () => {
     if (!file || !connected) {
-      setError("Please connect wallet and select a file");
+      setErrorMessage("Please connect wallet and select a file");
       return;
     }
 
     setUploading(true);
     setTxStatus('generating_proof');
-    setError(null);
-    setProgress(10);
-    setSuccess(false);
+    setErrorMessage(null);
+    setTxHash(null);
+    setExplorerUrl(null);
 
     try {
       // Step 1: Read text content if plain text/json/compact
@@ -86,14 +90,10 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
         textContent = textDecoder.decode(buffer.slice(0, 4000));
       }
 
-      setProgress(40);
-
       // Step 2: Compute SHA-256 cryptographic hash & CID
       const sha256 = await computeContentHash(file);
       const generatedCid = generateMockCid(sha256);
       setCid(generatedCid);
-
-      setProgress(70);
 
       // Step 3: Execute Midnight ZK Circuit Registration via Native Wallet Session
       setTxStatus('submitting');
@@ -101,8 +101,6 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
       let finalTxHash = "";
       if (wallet && typeof wallet.submitTx === "function") {
         try {
-          // Route transaction through the connected wallet DApp Connector API
-          // This will trigger the wallet extension's sign & submit popup
           const txResponseHash = await wallet.submitTx({
             circuit: "register_public_file",
             args: { cid: generatedCid, owner: address, hash: sha256 }
@@ -112,7 +110,6 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
           throw new Error("Transaction signature rejected by wallet.");
         }
       } else {
-        // Fallback for development if wallet object is incomplete
         const approved = window.confirm(`Midnight Lace (Simulated Wallet)\n\nApprove transaction: register_public_file\nNetwork: Preprod\n\nDo you want to sign and submit this transaction?`);
         if (!approved) {
           throw new Error("Transaction signature rejected by user.");
@@ -126,12 +123,10 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
       const sanitizedHash = cleanTxHash(finalTxHash);
       console.log(`[Midnight SDK] Transaction Broadcasted: ${sanitizedHash}`);
       setTxHash(sanitizedHash);
-      
-      setTxStatus('indexing');
-      setProgress(90);
+      setExplorerUrl(`https://explorer.preprod.midnight.network/tx/${sanitizedHash}`);
       
       // Wait for indexing confirmation
-      await new Promise((r) => setTimeout(r, 2000));
+      await new Promise((r) => setTimeout(r, 3000));
       setTxStatus('confirmed');
 
       const record: FileRecord = {
@@ -154,11 +149,10 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
 
       registerFileRecord(record);
       if (onFileUploaded) onFileUploaded(record);
-
-      setProgress(100);
-      setSuccess(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload & on-chain commitment failed");
+    } catch (err: any) {
+      console.error("Transaction Error:", err);
+      setTxStatus('error');
+      setErrorMessage(err?.message || "Transaction failed during ZK proof execution or wallet signing.");
     } finally {
       setUploading(false);
     }
@@ -171,9 +165,8 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
     setCid(null);
     setTxHash(null);
     setTxStatus('idle');
-    setError(null);
-    setSuccess(false);
-    setProgress(0);
+    setErrorMessage(null);
+    setExplorerUrl(null);
   };
 
   return (
@@ -185,49 +178,27 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
         </p>
       </div>
 
-      {error && (
+      {/* Legacy error banner hidden if txStatus handles it, but kept just in case */}
+      {errorMessage && txStatus === 'idle' && (
         <div className="upload-error" role="alert">
-          ⚠️ {error}
+          ⚠️ {errorMessage}
         </div>
       )}
 
-      {success && (
-        <div className="upload-success" role="status">
+      {txStatus === 'confirmed' && cid && (
+        <div className="upload-success" role="status" style={{ marginBottom: '20px' }}>
           <CheckCircle size={32} color="#00FF87" style={{ margin: '0 auto 12px' }} />
           <h3>File Registered on Midnight Blockchain!</h3>
-          {cid && (
-            <div className="success-cid">
-              IPFS CID: <code>{cid}</code>
-            </div>
-          )}
-          {txHash && txStatus === 'indexing' && (
-            <div className="success-tx" style={{ marginTop: '10px', background: 'rgba(255,184,0,0.1)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(255,184,0,0.3)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#FFB800', fontWeight: 600 }}>
-                <span className="spinner" style={{ width: '16px', height: '16px', borderWidth: '2px', borderTopColor: '#FFB800' }}></span>
-                Transaction Broadcasted! Indexing on-chain...
-              </div>
-              <p style={{ fontSize: '0.8rem', color: '#9CA3AF', margin: '4px 0 0 24px' }}>
-                Indexing can take 20–60 seconds on testnets.
-              </p>
-            </div>
-          )}
-          {txHash && txStatus === 'confirmed' && (
-            <div className="success-tx" style={{ marginTop: '10px' }}>
-              <div style={{ fontSize: '0.85rem', color: '#9CA3AF', marginBottom: '8px' }}>
-                Midnight Tx Hash: <code>{txHash}</code>
-                <a href={`https://explorer.preprod.midnight.network/transaction/${txHash}`} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#00F2FE', textDecoration: 'none', marginLeft: '12px', fontWeight: 600 }}>
-                  View on Explorer ↗
-                </a>
-              </div>
-            </div>
-          )}
+          <div className="success-cid">
+            IPFS CID: <code>{cid}</code>
+          </div>
           <button className="btn btn-secondary" onClick={reset} style={{ marginTop: '16px' }}>
             Upload Another File
           </button>
         </div>
       )}
 
-      {!success && (
+      {txStatus === 'idle' && (
         <>
           {/* File Dropzone */}
           <div
@@ -374,23 +345,65 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
               disabled={!connected || uploading}
               style={{ marginTop: '24px', width: '100%', padding: '14px', fontSize: '1rem', background: privacyMode === 'shielded' ? 'linear-gradient(135deg, #7F00FF, #E100FF)' : undefined }}
             >
-              {uploading ? (
-                progress < 50 ? "Generating Local ZK Proof..." : "Submitting Transaction..."
-              ) : (
-                `Commit ZK Record to Midnight (${privacyMode.toUpperCase()})`
-              )}
+              Commit ZK Record to Midnight ({privacyMode.toUpperCase()})
             </button>
           )}
+        </>
+      )}
 
-          {uploading && (
-            <div className="upload-progress" style={{ marginTop: '20px' }}>
-              <div className="progress-bar">
-                <div className="progress-fill" style={{ width: `${progress}%` }}></div>
-              </div>
-              <div className="progress-text">{progress}% {progress < 50 ? "Generating Local ZK Proof..." : "Submitting Transaction..."}</div>
+      {/* Render Transaction Status & Receipt Panel precisely matching Task 3 snippet */}
+      {txStatus !== 'idle' && (
+        <div className="mt-6 p-4 rounded-lg border bg-gray-900 border-gray-700 text-white space-y-3" style={{ marginTop: '24px', padding: '16px', borderRadius: '8px', border: '1px solid #374151', backgroundColor: '#111827', color: 'white' }}>
+          {txStatus === 'generating_proof' && (
+            <div className="flex items-center space-x-3 text-yellow-400" style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#FBBF24', marginBottom: '12px' }}>
+              <span className="animate-spin text-xl" style={{ fontSize: '1.25rem', display: 'inline-block', animation: 'spin 1s linear infinite' }}>⏳</span>
+              <span className="font-medium" style={{ fontWeight: 500 }}>Generating local Zero-Knowledge Proof witness...</span>
             </div>
           )}
-        </>
+
+          {txStatus === 'submitting' && (
+            <div className="flex items-center space-x-3 text-blue-400" style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#60A5FA', marginBottom: '12px' }}>
+              <span className="animate-pulse text-xl" style={{ fontSize: '1.25rem', animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}>⚡</span>
+              <span className="font-medium" style={{ fontWeight: 500 }}>Transaction submitted to Midnight Preprod. Awaiting block confirmation...</span>
+            </div>
+          )}
+
+          {txStatus === 'confirmed' && (
+            <div className="space-y-2" style={{ marginBottom: '12px' }}>
+              <div className="flex items-center space-x-2 text-green-400 font-semibold" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#34D399', fontWeight: 600 }}>
+                <span>✅</span>
+                <span>Transaction Confirmed On-Chain!</span>
+              </div>
+            </div>
+          )}
+
+          {txStatus === 'error' && (
+            <div className="text-red-400 space-y-1" style={{ color: '#F87171', marginBottom: '12px' }}>
+              <div className="font-semibold" style={{ fontWeight: 600 }}>❌ Transaction Failed</div>
+              <div className="text-xs text-red-300" style={{ fontSize: '0.75rem', color: '#FCA5A5' }}>{errorMessage}</div>
+            </div>
+          )}
+
+          {txHash && (
+            <div className="pt-2 border-t border-gray-800 space-y-2" style={{ paddingTop: '12px', marginTop: '12px', borderTop: '1px solid #1F2937' }}>
+              <div className="text-xs text-gray-400" style={{ fontSize: '0.75rem', color: '#9CA3AF', marginBottom: '8px' }}>Transaction ID / Hash:</div>
+              <div className="font-mono text-xs bg-black p-2 rounded break-all text-purple-300" style={{ fontFamily: 'monospace', fontSize: '0.75rem', backgroundColor: 'black', padding: '8px', borderRadius: '4px', wordBreak: 'break-all', color: '#D8B4FE' }}>
+                {txHash}
+              </div>
+              {explorerUrl && (
+                <a
+                  href={explorerUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-2 px-4 py-2 text-xs font-semibold text-white bg-purple-600 rounded hover:bg-purple-700 transition-colors"
+                  style={{ display: 'inline-block', marginTop: '12px', padding: '8px 16px', fontSize: '0.75rem', fontWeight: 600, color: 'white', backgroundColor: '#9333EA', borderRadius: '4px', textDecoration: 'none' }}
+                >
+                  View on Midnight Explorer ↗
+                </a>
+              )}
+            </div>
+          )}
+        </div>
       )}
 
       <div className="privacy-notice" style={{ marginTop: '24px' }}>
