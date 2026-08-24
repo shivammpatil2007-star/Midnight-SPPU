@@ -14,7 +14,7 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [txHash, setTxHash] = useState<string | null>(null);
-  const [txStatus, setTxStatus] = useState<'idle' | 'submitting' | 'indexing' | 'confirmed'>('idle');
+  const [txStatus, setTxStatus] = useState<'idle' | 'generating_proof' | 'submitting' | 'indexing' | 'confirmed' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -72,6 +72,7 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
     }
 
     setUploading(true);
+    setTxStatus('generating_proof');
     setError(null);
     setProgress(10);
     setSuccess(false);
@@ -214,6 +215,9 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
             <div className="success-tx" style={{ marginTop: '10px' }}>
               <div style={{ fontSize: '0.85rem', color: '#9CA3AF', marginBottom: '8px' }}>
                 Midnight Tx Hash: <code>{txHash}</code>
+                <a href={`https://explorer.preprod.midnight.network/transaction/${txHash}`} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#00F2FE', textDecoration: 'none', marginLeft: '12px', fontWeight: 600 }}>
+                  View on Explorer ↗
+                </a>
               </div>
             </div>
           )}
