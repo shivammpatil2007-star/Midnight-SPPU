@@ -18,7 +18,7 @@ By decoupling the public registry from the private witness data, this applicatio
 
 ---
 
-## 🔗 Live Links & Preprod Verification
+## 🔗 Live Links
 
 | Resource | Link |
 | :--- | :--- |
