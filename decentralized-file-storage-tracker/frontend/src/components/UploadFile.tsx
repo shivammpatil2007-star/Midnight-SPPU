@@ -19,8 +19,6 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
   const [txStatus, setTxStatus] = useState<TxStatus>('idle');
   const [txHash, setTxHash] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [explorerUrl, setExplorerUrl] = useState<string | null>(null);
-  
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   // Privacy & Encryption Options
@@ -55,7 +53,6 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
     setCid(null);
     setTxHash(null);
     setTxStatus('idle');
-    setExplorerUrl(null);
   }, [validateFile]);
 
   const computeContentHash = async (file: File): Promise<string> => {
@@ -79,7 +76,6 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
     setTxStatus('generating_proof');
     setErrorMessage(null);
     setTxHash(null);
-    setExplorerUrl(null);
 
     try {
       // Step 1: Read text content if plain text/json/compact
@@ -114,15 +110,16 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
         if (!approved) {
           throw new Error("Transaction signature rejected by user.");
         }
+        // Generate a mock hash for the UI demo so it looks like a new transaction each time
         await new Promise((r) => setTimeout(r, 1200));
-        // Use a real Midnight Preprod transaction hash so the Explorer link works in the demo
-        finalTxHash = `tx_0fe96b365df92d5e7dea0a7929d977247e6d05c297396139e03286b4e88883f8`;
+        finalTxHash = `0xmn_${Array.from(crypto.getRandomValues(new Uint8Array(16)))
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("")}`;
       }
       
       const sanitizedHash = cleanTxHash(finalTxHash);
       console.log(`[Midnight SDK] Transaction Broadcasted: ${sanitizedHash}`);
       setTxHash(sanitizedHash);
-      setExplorerUrl(`https://explorer.preprod.midnight.network/tx/${sanitizedHash}`);
       
       // Wait for indexing confirmation
       await new Promise((r) => setTimeout(r, 3000));
@@ -165,7 +162,6 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
     setTxHash(null);
     setTxStatus('idle');
     setErrorMessage(null);
-    setExplorerUrl(null);
   };
 
   return (
@@ -389,17 +385,6 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
               <div className="font-mono text-xs bg-black p-2 rounded break-all text-purple-300" style={{ fontFamily: 'monospace', fontSize: '0.75rem', backgroundColor: 'black', padding: '8px', borderRadius: '4px', wordBreak: 'break-all', color: '#D8B4FE' }}>
                 {txHash}
               </div>
-              {explorerUrl && (
-                <a
-                  href={explorerUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block mt-2 px-4 py-2 text-xs font-semibold text-white bg-purple-600 rounded hover:bg-purple-700 transition-colors"
-                  style={{ display: 'inline-block', marginTop: '12px', padding: '8px 16px', fontSize: '0.75rem', fontWeight: 600, color: 'white', backgroundColor: '#9333EA', borderRadius: '4px', textDecoration: 'none' }}
-                >
-                  View on Midnight Explorer ↗
-                </a>
-              )}
             </div>
           )}
         </div>
