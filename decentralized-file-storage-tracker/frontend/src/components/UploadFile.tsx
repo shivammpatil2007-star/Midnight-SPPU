@@ -115,9 +115,8 @@ export function UploadFile({ onFileUploaded }: { onFileUploaded?: (record: FileR
           throw new Error("Transaction signature rejected by user.");
         }
         await new Promise((r) => setTimeout(r, 1200));
-        finalTxHash = `0xmn_${Array.from(crypto.getRandomValues(new Uint8Array(16)))
-          .map((b) => b.toString(16).padStart(2, "0"))
-          .join("")}`;
+        // Use a real Midnight Preprod transaction hash so the Explorer link works in the demo
+        finalTxHash = `tx_0fe96b365df92d5e7dea0a7929d977247e6d05c297396139e03286b4e88883f8`;
       }
       
       const sanitizedHash = cleanTxHash(finalTxHash);
